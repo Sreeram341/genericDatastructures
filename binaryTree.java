@@ -8,24 +8,14 @@ public class binaryTree {
 		
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes", "unused" })
+	@SuppressWarnings({ "unchecked", "rawtypes"})
 	public void addNode(treeNode curr) {
 		
 		if (Head==null ||(Head.right == null) || (Head.left == null)) 
 		{
 			String header = "Y";
 			if (Head==null)Head =curr;
-			else if((Head.right == null) && (Head.left == null)) {
-				if(((Integer)curr.ref>(Integer)Head.ref) ) {
-					System.out.println("Head right fixed");
-					Head.right=curr;
-				}
-				else {Head.left=curr;}
-			}
-			else {
-				if (Head.right==null)fixTree(Head, Head.left, curr,header);
-				fixTree(Head, Head.right, curr,header);
-			}
+			else fixTree(Head, curr,header);
 		}
 		else {
 			 
@@ -44,14 +34,14 @@ public class binaryTree {
 		}
 		
 	}
-	
+	// Main Core logic to maintain tree always full and filled
 	@SuppressWarnings({ "rawtypes", "unchecked" } )
-	public void fixTree(treeNode head,treeNode riteleft, treeNode currVal,String header) {
+	public void fixTree(treeNode head,treeNode currVal,String header) {  
 		treeNode temp;
 		
 		if ( ( (Integer) head.ref < (Integer) currVal.ref) && (head.right != null)  ) { // Condition 1
 			
-			if( ((Integer)currVal.ref < (Integer)head.right.ref) ) { // Sub condition
+			if( ((Integer)currVal.ref > (Integer)head.right.ref) ) { // Sub condition
 				temp = head;
 				head = head.right;
 				head.right = currVal;
@@ -66,13 +56,57 @@ public class binaryTree {
 				if(header.equals("Y")) Head=head;
 			}
 		}
+		// Condition 2
+		else if( ( (Integer)currVal.ref < (Integer) head.ref) && (head.right==null) && ((Integer)currVal.ref) > (Integer)head.left.ref ) {
+			
+			temp = head;
+			head = currVal;
+			head.left = temp.left;
+			head.right = temp;
+			if(header.equals("Y")) Head=head;
+		}
+		// Condition 3
+		else if( ( (Integer)currVal.ref > (Integer) head.ref) && (head.left==null) && ((Integer)currVal.ref) < (Integer)head.right.ref ) {
+			
+			temp = head;
+			head = currVal;
+			head.left = temp.left;
+			head.right = temp;
+			if(header.equals("Y")) Head=head;
+		}
+		// Condition 4
+		else if ( ( (Integer) head.ref > (Integer) currVal.ref) && (head.left != null)  ) { // Condition 4
+			
+			if((Integer) currVal.ref < (Integer) head.left.ref) {
+				temp = head;
+				head = temp.left;
+				head.left = currVal;
+				head.right =temp;
+				if(header.equals("Y")) Head=head;
+			}
+			else {
+				
+				temp = head;
+				head = currVal;
+				head.left = temp.left;
+				head.right = temp;
+				if(header.equals("Y")) Head=head;
+			}
+			
+		}
+		// Condition 5
+		
+		else if( ((Integer)head.ref<(Integer)currVal.ref) && (head.right == null) ) {
+			head.right = currVal;
+		}
 		
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" } )
 	public void fixNode(treeNode riteleft, treeNode currVal) {
+		String header = "N";
 			if ((Integer)riteleft.ref<(Integer)currVal.ref) {
-				if(riteleft.right == null) {	riteleft.right = currVal;}			
+				if(riteleft.right == null) {	fixTree(riteleft,currVal,header);}			
 				else { fixNode(riteleft.right,currVal);}
 			}
 			else {
